@@ -1,0 +1,554 @@
+{
+    "info": {
+      "name": "Document Management API",
+      "description": "API collection for document management system",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+      {
+        "key": "baseUrl",
+        "value": "http://localhost:5001",
+        "type": "string"
+      }
+    ],
+    "auth": {
+      "type": "bearer",
+      "bearer": [
+        {
+          "key": "token",
+          "value": "{{authToken}}",
+          "type": "string"
+        }
+      ]
+    },
+    "item": [
+      {
+        "name": "Authentication",
+        "item": [
+          {
+            "name": "Register User",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/register",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "register"]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"securepassword\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+              },
+              "description": "Register a new user account"
+            },
+            "response": []
+          },
+          {
+            "name": "Login",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "var jsonData = pm.response.json();",
+                    "pm.environment.set(\"authToken\", jsonData.token);"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "auth": {
+                "type": "noauth"
+              },
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/login",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "login"]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"securepassword\"\n}"
+              },
+              "description": "Authenticate and get JWT token"
+            },
+            "response": []
+          }
+        ],
+        "description": "Authentication related endpoints"
+      },
+      {
+        "name": "Users",
+        "item": [
+          {
+            "name": "Get All Users",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/users?page=1&limit=20&sort=createdAt&order=desc",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "20"
+                  },
+                  {
+                    "key": "sort",
+                    "value": "createdAt"
+                  },
+                  {
+                    "key": "order",
+                    "value": "desc"
+                  }
+                ]
+              },
+              "description": "Get all users (Admin only)"
+            },
+            "response": []
+          },
+          {
+            "name": "Get User by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/users/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "user123",
+                    "description": "User ID"
+                  }
+                ]
+              },
+              "description": "Get user by ID (Admin only)"
+            },
+            "response": []
+          },
+          {
+            "name": "Update User",
+            "request": {
+              "method": "PATCH",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/users/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "user123",
+                    "description": "User ID"
+                  }
+                ]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"role\": \"Editor\"\n}"
+              },
+              "description": "Update user (Admin only)"
+            },
+            "response": []
+          },
+          {
+            "name": "Delete User",
+            "request": {
+              "method": "DELETE",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/users/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "user123",
+                    "description": "User ID"
+                  }
+                ]
+              },
+              "description": "Delete user (Admin only)"
+            },
+            "response": []
+          }
+        ],
+        "description": "User management endpoints"
+      },
+      {
+        "name": "Documents",
+        "item": [
+          {
+            "name": "Upload Document",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/documents",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "documents"]
+              },
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "file",
+                    "type": "file",
+                    "src": "/path/to/document.pdf"
+                  },
+                  {
+                    "key": "metadata",
+                    "value": "{\n  \"title\": \"Document Title\",\n  \"description\": \"Document description\",\n  \"tags\": [\"tag1\", \"tag2\"],\n  \"category\": \"category1\"\n}",
+                    "type": "text"
+                  }
+                ]
+              },
+              "description": "Upload a new document (Admin, Editor)"
+            },
+            "response": []
+          },
+          {
+            "name": "Get All Documents",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/documents?page=1&limit=20&sort=createdAt&order=desc&status=Processed&category=category1&tags=tag1,tag2",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "documents"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "20"
+                  },
+                  {
+                    "key": "sort",
+                    "value": "createdAt"
+                  },
+                  {
+                    "key": "order",
+                    "value": "desc"
+                  },
+                  {
+                    "key": "status",
+                    "value": "Processed"
+                  },
+                  {
+                    "key": "category",
+                    "value": "category1"
+                  },
+                  {
+                    "key": "tags",
+                    "value": "tag1,tag2"
+                  }
+                ]
+              },
+              "description": "Get all documents"
+            },
+            "response": []
+          },
+          {
+            "name": "Get My Documents",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/documents/my?page=1&limit=20&sort=createdAt&order=desc",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "documents", "my"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "20"
+                  },
+                  {
+                    "key": "sort",
+                    "value": "createdAt"
+                  },
+                  {
+                    "key": "order",
+                    "value": "desc"
+                  }
+                ]
+              },
+              "description": "Get documents uploaded by current user"
+            },
+            "response": []
+          },
+          {
+            "name": "Get Document by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/documents/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "documents", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "doc123",
+                    "description": "Document ID"
+                  }
+                ]
+              },
+              "description": "Get document by ID"
+            },
+            "response": []
+          },
+          {
+            "name": "Update Document",
+            "request": {
+              "method": "PATCH",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/documents/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "documents", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "doc123",
+                    "description": "Document ID"
+                  }
+                ]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"title\": \"Updated Document Title\",\n  \"description\": \"Updated description\",\n  \"tags\": [\"tag1\", \"tag2\", \"tag3\"],\n  \"category\": \"category2\"\n}"
+              },
+              "description": "Update document (Admin, Editor)"
+            },
+            "response": []
+          },
+          {
+            "name": "Delete Document",
+            "request": {
+              "method": "DELETE",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/documents/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "documents", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "doc123",
+                    "description": "Document ID"
+                  }
+                ]
+              },
+              "description": "Delete document (Admin only)"
+            },
+            "response": []
+          }
+        ],
+        "description": "Document management endpoints"
+      },
+      {
+        "name": "Ingestion",
+        "item": [
+          {
+            "name": "Trigger Ingestion",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/ingestion/trigger",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "ingestion", "trigger"]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"documentIds\": [\"doc123\", \"doc456\"],\n  \"options\": {\n    \"extractText\": true,\n    \"generateEmbeddings\": true,\n    \"priority\": \"high\"\n  }\n}"
+              },
+              "description": "Trigger ingestion process (Admin, Editor)"
+            },
+            "response": []
+          },
+          {
+            "name": "Ingestion Callback",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                },
+                {
+                  "key": "X-API-Key",
+                  "value": "{{apiKey}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/ingestion/callback",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "ingestion", "callback"]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"ingestionId\": \"ing123\",\n  \"documentId\": \"doc123\",\n  \"status\": \"Completed\",\n  \"data\": {\n    \"extractedText\": \"Sample extracted text...\",\n    \"pageCount\": 10,\n    \"metadata\": {}\n  }\n}"
+              },
+              "description": "Callback for Python backend"
+            },
+            "response": []
+          },
+          {
+            "name": "Get All Ingestion Processes",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/ingestion?page=1&limit=20&sort=createdAt&order=desc&status=Completed",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "ingestion"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "20"
+                  },
+                  {
+                    "key": "sort",
+                    "value": "createdAt"
+                  },
+                  {
+                    "key": "order",
+                    "value": "desc"
+                  },
+                  {
+                    "key": "status",
+                    "value": "Completed"
+                  }
+                ]
+              },
+              "description": "Get all ingestion processes (Admin only)"
+            },
+            "response": []
+          },
+          {
+            "name": "Get My Ingestion Processes",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/ingestion/my?page=1&limit=20&sort=createdAt&order=desc",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "ingestion", "my"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "20"
+                  },
+                  {
+                    "key": "sort",
+                    "value": "createdAt"
+                  },
+                  {
+                    "key": "order",
+                    "value": "desc"
+                  }
+                ]
+              },
+              "description": "Get ingestion processes triggered by current user"
+            },
+            "response": []
+          },
+          {
+            "name": "Get Ingestion Process by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/ingestion/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "ingestion", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "ing123",
+                    "description": "Ingestion Process ID"
+                  }
+                ]
+              },
+              "description": "Get ingestion process by ID"
+            },
+            "response": []
+          }
+        ],
+        "description": "Document ingestion endpoints"
+      }
+    ],
+    "event": [
+      {
+        "listen": "prerequest",
+        "script": {
+          "type": "text/javascript",
+          "exec": [""]
+        }
+      },
+      {
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [""]
+        }
+      }
+    ]
+  }
