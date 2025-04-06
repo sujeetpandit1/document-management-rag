@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UploadedFile, UseInterceptors, Req, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UploadedFile,
+  UseInterceptors,
+  Req,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -32,17 +46,20 @@ export class DocumentsController {
         const allowedTypes = [
           'application/pdf',
           'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         ];
         if (allowedTypes.includes(file.mimetype)) {
           cb(null, true);
         } else {
-          cb(new BadRequestException('Only PDF and Word documents are allowed'), false);
+          cb(
+            new BadRequestException('Only PDF and Word documents are allowed'),
+            false,
+          );
         }
       },
       limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB limit
-      }
+        fileSize: 10 * 1024 * 1024, // 10MB limit
+      },
     }),
   )
   async create(
@@ -57,25 +74,27 @@ export class DocumentsController {
     } catch (error) {
       throw new BadRequestException('Invalid metadata format');
     }
-  
+
     // Get user info
-    const user = req.user as any;
+    const user = req.user;
     // console.log(user);
     if (!user) {
       throw new ForbiddenException('User information not found');
     }
-  
+
     // Role-based access
     const allowedRoles = ['admin', 'editor'];
     if (!allowedRoles.includes(user.role)) {
-      throw new ForbiddenException('You do not have permission to perform this action');
+      throw new ForbiddenException(
+        'You do not have permission to perform this action',
+      );
     }
-  
+
     // Ensure file exists
     if (!file) {
       throw new BadRequestException('File upload is required');
     }
-  
+
     // Call service method
     return this.documentsService.create(parsedMetadata, file, user);
   }
@@ -97,19 +116,24 @@ export class DocumentsController {
 
   @Patch(':id')
   // @Roles(Role.ADMIN, Role.EDITOR)
-  update(@Req() req, @Param('id') id: number, @Body() updateDocumentDto: UpdateDocumentDto) {
-
+  update(
+    @Req() req,
+    @Param('id') id: number,
+    @Body() updateDocumentDto: UpdateDocumentDto,
+  ) {
     // Get user info
-    const user = req.user as any;
+    const user = req.user;
     // console.log(user);
     if (!user) {
       throw new ForbiddenException('User information not found');
     }
-  
+
     // Role-based access
     const allowedRoles = ['admin', 'editor'];
     if (!allowedRoles.includes(user.role)) {
-      throw new ForbiddenException('You do not have access to upload documents');
+      throw new ForbiddenException(
+        'You do not have access to upload documents',
+      );
     }
     return this.documentsService.update(id, updateDocumentDto);
   }
@@ -118,16 +142,18 @@ export class DocumentsController {
   // @Roles(Role.ADMIN)
   remove(@Req() req, @Param('id') id: string) {
     // Get user info
-    const user = req.user as any;
+    const user = req.user;
     // console.log(user);
     if (!user) {
       throw new ForbiddenException('User information not found');
     }
-  
+
     // Role-based access
     const allowedRoles = ['admin'];
     if (!allowedRoles.includes(user.role)) {
-      throw new ForbiddenException('You do not have permission to perform this action');
+      throw new ForbiddenException(
+        'You do not have permission to perform this action',
+      );
     }
     return this.documentsService.remove(id);
   }

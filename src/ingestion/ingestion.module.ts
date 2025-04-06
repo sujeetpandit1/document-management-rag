@@ -7,11 +7,7 @@ import { Ingestion } from './entities/ingestion.entity';
 import { DocumentsModule } from '../documents/documents.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Ingestion]),
-    HttpModule,
-    DocumentsModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Ingestion]), HttpModule, DocumentsModule],
   controllers: [IngestionController],
   providers: [IngestionService],
   exports: [IngestionService],

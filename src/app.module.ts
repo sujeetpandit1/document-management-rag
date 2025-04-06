@@ -31,8 +31,8 @@ import { initializeDatabase } from './database/database-initializer'; // Import 
           logging: true,
           migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
           cli: {
-            migrationsDir: 'src/migrations'
-          }
+            migrationsDir: 'src/migrations',
+          },
         };
       },
     }),

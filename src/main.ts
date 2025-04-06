@@ -12,13 +12,13 @@ async function bootstrap() {
   }
 
   const app = await NestFactory.create(AppModule);
-  
+
   // Enable CORS
   app.enableCors();
   // app.useGlobalGuards(new JwtAuthGuard());
 
-  app.useGlobalFilters(new AllExceptionsFilter()); 
-  
+  app.useGlobalFilters(new AllExceptionsFilter());
+
   // Set global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -27,10 +27,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  
+
   // Set global prefix
   app.setGlobalPrefix('api');
-  
+
   await app.listen(5001);
 }
 bootstrap();

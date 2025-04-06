@@ -1,7 +1,9 @@
 import { ConfigService } from '@nestjs/config';
 import { Pool } from 'pg';
 
-export async function initializeDatabase(configService: ConfigService): Promise<void> {
+export async function initializeDatabase(
+  configService: ConfigService,
+): Promise<void> {
   const databaseName = configService.get<string>('DATABASE_NAME');
   const host = configService.get<string>('DATABASE_HOST');
   const port = configService.get<number>('DATABASE_PORT');

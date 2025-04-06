@@ -27,7 +27,7 @@ describe('ErrorHandler (e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true,
-      })
+      }),
     );
     app.useGlobalFilters(new AllExceptionsFilter());
     await app.init();

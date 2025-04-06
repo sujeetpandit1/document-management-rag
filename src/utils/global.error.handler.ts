@@ -15,7 +15,7 @@ const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.json()
+    winston.format.json(),
   ),
   transports: [
     new DailyRotateFile({
@@ -40,7 +40,7 @@ if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
       format: winston.format.simple(),
-    })
+    }),
   );
 }
 
@@ -95,8 +95,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // Extract file and line number from stack trace
     if (stack) {
       const stackLines = stack.split('\n');
-      const relevantLine = stackLines.find((line) =>
-        line.includes('.ts') || line.includes('.js')
+      const relevantLine = stackLines.find(
+        (line) => line.includes('.ts') || line.includes('.js'),
       );
       origin = relevantLine?.trim();
     }
