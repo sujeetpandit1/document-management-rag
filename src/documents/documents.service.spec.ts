@@ -28,7 +28,9 @@ describe('DocumentsService', () => {
     }).compile();
 
     service = module.get<DocumentsService>(DocumentsService);
-    documentsRepository = module.get<Repository<Document>>(getRepositoryToken(Document));
+    documentsRepository = module.get<Repository<Document>>(
+      getRepositoryToken(Document),
+    );
   });
 
   it('should be defined', () => {
@@ -69,11 +71,15 @@ describe('DocumentsService', () => {
         userId: mockUser.id,
       } as Document;
 
-      jest.spyOn(documentsRepository, 'create').mockReturnValue(expectedDocument);
-      jest.spyOn(documentsRepository, 'save').mockResolvedValue(expectedDocument);
+      jest
+        .spyOn(documentsRepository, 'create')
+        .mockReturnValue(expectedDocument);
+      jest
+        .spyOn(documentsRepository, 'save')
+        .mockResolvedValue(expectedDocument);
 
       const result = await service.create(createDto, mockFile, mockUser);
-      
+
       expect(result).toEqual(expectedDocument);
       expect(documentsRepository.create).toHaveBeenCalledWith({
         ...createDto,
@@ -83,14 +89,16 @@ describe('DocumentsService', () => {
         size: mockFile.size,
         uploadedBy: mockUser,
       });
-      expect(documentsRepository.save).toHaveBeenCalledWith(expect.objectContaining({
-        ...createDto,
-        filename: mockFile.originalname,
-        filepath: `uploads/${mockFile.filename}`,
-        mimeType: mockFile.mimetype,
-        size: mockFile.size,
-        uploadedBy: mockUser,
-      }));
+      expect(documentsRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...createDto,
+          filename: mockFile.originalname,
+          filepath: `uploads/${mockFile.filename}`,
+          mimeType: mockFile.mimetype,
+          size: mockFile.size,
+          uploadedBy: mockUser,
+        }),
+      );
     });
   });
 
@@ -134,7 +142,9 @@ describe('DocumentsService', () => {
       const documentId = 1;
       const mockDocument = { id: documentId, title: 'Test Doc' } as Document;
 
-      jest.spyOn(documentsRepository, 'findOne').mockResolvedValue(mockDocument);
+      jest
+        .spyOn(documentsRepository, 'findOne')
+        .mockResolvedValue(mockDocument);
 
       const result = await service.findOne(documentId);
       expect(result).toEqual(mockDocument);
@@ -148,7 +158,9 @@ describe('DocumentsService', () => {
       const documentId = 999;
       jest.spyOn(documentsRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.findOne(documentId)).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(documentId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -156,7 +168,10 @@ describe('DocumentsService', () => {
     it('should update a document', async () => {
       const documentId = 1;
       const updateDto = { title: 'Updated Title' };
-      const existingDoc = { id: documentId, title: 'Original Title' } as Document;
+      const existingDoc = {
+        id: documentId,
+        title: 'Original Title',
+      } as Document;
       const updatedDoc = { ...existingDoc, ...updateDto } as Document;
 
       jest.spyOn(service, 'findOne').mockResolvedValue(existingDoc);
@@ -172,7 +187,9 @@ describe('DocumentsService', () => {
   describe('remove', () => {
     it('should delete a document', async () => {
       const documentId = '1';
-      jest.spyOn(documentsRepository, 'delete').mockResolvedValue({ affected: 1, raw: {} });
+      jest
+        .spyOn(documentsRepository, 'delete')
+        .mockResolvedValue({ affected: 1, raw: {} });
 
       await service.remove(documentId);
       expect(documentsRepository.delete).toHaveBeenCalledWith(documentId);
@@ -180,9 +197,13 @@ describe('DocumentsService', () => {
 
     it('should throw NotFoundException if document not found', async () => {
       const documentId = '999';
-      jest.spyOn(documentsRepository, 'delete').mockResolvedValue({ affected: 0, raw: {} });
+      jest
+        .spyOn(documentsRepository, 'delete')
+        .mockResolvedValue({ affected: 0, raw: {} });
 
-      await expect(service.remove(documentId)).rejects.toThrow(NotFoundException);
+      await expect(service.remove(documentId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

@@ -14,10 +14,10 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRATION },
     }),
-    TypeOrmModule.forFeature([User])
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [UsersController],
-  providers: [JwtStrategy, UsersService], 
+  providers: [JwtStrategy, UsersService],
   exports: [UsersService],
 })
 export class UsersModule {}

@@ -71,14 +71,12 @@ describe('AuthController (e2e)', () => {
 
   it('/api/auth/login (POST) - should login and return JWT token', async () => {
     // First, register a user
-    await request(app.getHttpServer())
-      .post('/api/auth/register')
-      .send({
-        email: 'login-test@example.com',
-        password: 'password123',
-        firstName: 'Login',
-        lastName: 'Test',
-      });
+    await request(app.getHttpServer()).post('/api/auth/register').send({
+      email: 'login-test@example.com',
+      password: 'password123',
+      firstName: 'Login',
+      lastName: 'Test',
+    });
 
     // Then, login with the registered user
     return request(app.getHttpServer())

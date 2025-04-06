@@ -40,15 +40,15 @@ export class Ingestion {
   triggeredById!: string;
 
   @Column({
-      type: 'enum',
-      enum: IngestionStatus,
-      default: IngestionStatus.PENDING,
+    type: 'enum',
+    enum: IngestionStatus,
+    default: IngestionStatus.PENDING,
   })
   @Index()
   status!: IngestionStatus;
 
   @Column({ type: 'text', nullable: true })
-  errorMessage!: string | null
+  errorMessage!: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
   options?: any;

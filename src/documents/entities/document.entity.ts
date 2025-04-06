@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { IsNotEmpty } from 'class-validator';
 
@@ -43,9 +51,9 @@ export class Document {
   @Column()
   size: number;
 
-  @ManyToOne(() => User, user => user.documents)
-  uploadedBy: User; @Column({ default: false })
-
+  @ManyToOne(() => User, (user) => user.documents)
+  uploadedBy: User;
+  @Column({ default: false })
   isProcessed: boolean;
   userId: string;
 }

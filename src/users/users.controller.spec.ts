@@ -11,13 +11,19 @@ describe('UsersController', () => {
 
   beforeEach(async () => {
     mockUsersService = {
-      findAll: jest.fn().mockResolvedValue([{ id: '1', email: 'test@test.com' }]),
-      findById: jest.fn().mockImplementation((id) => 
-        Promise.resolve({ id, email: 'test@test.com' })
-      ),
-      update: jest.fn().mockImplementation((id, updateDto) => 
-        Promise.resolve({ id, ...updateDto })
-      ),
+      findAll: jest
+        .fn()
+        .mockResolvedValue([{ id: '1', email: 'test@test.com' }]),
+      findById: jest
+        .fn()
+        .mockImplementation((id) =>
+          Promise.resolve({ id, email: 'test@test.com' }),
+        ),
+      update: jest
+        .fn()
+        .mockImplementation((id, updateDto) =>
+          Promise.resolve({ id, ...updateDto }),
+        ),
       remove: jest.fn().mockResolvedValue(undefined),
     };
 

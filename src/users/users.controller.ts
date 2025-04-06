@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  ForbiddenException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Request } from 'express';
@@ -8,12 +19,11 @@ import { RolesGuard } from '../common/guards/roles.guard';
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) {} 
+  constructor(private usersService: UsersService) {}
 
   @Get()
   // @Roles(Role.ADMIN, Role.VIEWER)
   findAll(@Req() req: Request) {
-
     const user = req.user as any; // Cast if needed
     const allowedRoles = ['admin'];
 

@@ -13,11 +13,11 @@ describe('IngestionController', () => {
   const mockUser = {
     id: 'user-1',
     role: 'admin',
-    email: 'admin@test.com'
+    email: 'admin@test.com',
   };
 
   const mockRequest = {
-    user: mockUser
+    user: mockUser,
   };
 
   beforeEach(async () => {
@@ -31,10 +31,10 @@ describe('IngestionController', () => {
             updateIngestionStatus: jest.fn(),
             findAll: jest.fn(),
             findByUser: jest.fn(),
-            findOne: jest.fn()
-          }
-        }
-      ]
+            findOne: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<IngestionController>(IngestionController);
@@ -49,23 +49,26 @@ describe('IngestionController', () => {
     it('should call service with correct parameters', async () => {
       const dto: TriggerIngestionDto = {
         documentIds: [1],
-        options: { extractText: true }
+        options: { extractText: true },
       };
 
       await controller.triggerIngestion(dto, mockRequest);
-      expect(ingestionService.triggerIngestion).toHaveBeenCalledWith(dto, mockUser);
+      expect(ingestionService.triggerIngestion).toHaveBeenCalledWith(
+        dto,
+        mockUser,
+      );
     });
 
     it('should throw ForbiddenException for unauthorized role', async () => {
       const dto: TriggerIngestionDto = {
         documentIds: [1],
-        options: { extractText: true }
+        options: { extractText: true },
       };
       const badRequest = {
-        user: { ...mockUser, role: 'guest' }
+        user: { ...mockUser, role: 'guest' },
       };
 
-      expect(('You do not have access to upload documents'));
+      expect('You do not have access to upload documents');
       // await expect(controller.triggerIngestion(dto, badRequest))
       //   .rejects.toThrow(ForbiddenException);
     });
@@ -76,14 +79,14 @@ describe('IngestionController', () => {
       const payload = {
         ingestionId: '123',
         status: IngestionStatus.COMPLETED,
-        errorMessage: 'Success'
+        errorMessage: 'Success',
       };
 
       await controller.updateIngestionStatus(payload);
       expect(ingestionService.updateIngestionStatus).toHaveBeenCalledWith(
         '123',
         IngestionStatus.COMPLETED,
-        'Success'
+        'Success',
       );
     });
   });
@@ -96,10 +99,10 @@ describe('IngestionController', () => {
 
     it('should throw ForbiddenException for unauthorized role', async () => {
       const badRequest = {
-        user: { ...mockUser, role: 'viewer' }
+        user: { ...mockUser, role: 'viewer' },
       };
 
-      expect(('You do not have access to upload documents'));
+      expect('You do not have access to upload documents');
     });
   });
 

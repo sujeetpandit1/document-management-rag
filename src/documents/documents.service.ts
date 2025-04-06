@@ -15,7 +15,7 @@ export class DocumentsService {
 
   // async create(createDocumentDto: CreateDocumentDto, file: Express.Multer.File, user: User): Promise<Document> {
   //   const { title, description } = createDocumentDto;
-    
+
   //   const document = this.documentsRepository.create({
   //     title,
   //     description,
@@ -25,17 +25,18 @@ export class DocumentsService {
   //     size: file.size,
   //     uploadedBy: user,
   //   });
-    
+
   //   return this.documentsRepository.save(document);
   // }
 
   async create(
     createDocumentDto: CreateDocumentDto,
     file: Express.Multer.File,
-    user: User
+    user: User,
   ): Promise<Document> {
-    const { title, description, tags, category, author, language } = createDocumentDto;
-  
+    const { title, description, tags, category, author, language } =
+      createDocumentDto;
+
     const documentData: DeepPartial<Document> = {
       title,
       description,
@@ -49,7 +50,7 @@ export class DocumentsService {
       size: file.size,
       uploadedBy: user,
     };
-  
+
     const document = this.documentsRepository.create(documentData);
     return this.documentsRepository.save(document);
   }
@@ -69,29 +70,32 @@ export class DocumentsService {
 
   async findOne(id: number): Promise<Document> {
     const document = await this.documentsRepository.findOne({
-      where: {id},
+      where: { id },
       relations: ['uploadedBy'],
     });
-    
+
     if (!document) {
       throw new NotFoundException(`Document with ID "${id}" not found`);
     }
-    
+
     return document;
   }
 
-  async update(id: number, updateDocumentDto: UpdateDocumentDto): Promise<Document> {
+  async update(
+    id: number,
+    updateDocumentDto: UpdateDocumentDto,
+  ): Promise<Document> {
     const document = await this.findOne(id);
-    
+
     // Update document properties
     Object.assign(document, updateDocumentDto);
-    
+
     return this.documentsRepository.save(document);
   }
 
   async remove(id: string): Promise<void> {
     const result = await this.documentsRepository.delete(id);
-    
+
     if (result.affected === 0) {
       throw new NotFoundException(`Document with ID "${id}" not found`);
     }

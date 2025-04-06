@@ -6,15 +6,22 @@ import { faker } from '@faker-js/faker'; // Import from @faker-js/faker
 import { AppModule } from '../app.module';
 import { User } from '../users/entities/user.entity';
 import { Document } from '../documents/entities/document.entity';
-import { Ingestion, IngestionStatus } from '../ingestion/entities/ingestion.entity';
+import {
+  Ingestion,
+  IngestionStatus,
+} from '../ingestion/entities/ingestion.entity';
 import { DeepPartial } from 'typeorm';
 import { Role } from 'src/common/enums/role.enum';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const userRepository = app.get<Repository<User>>(getRepositoryToken(User));
-  const documentRepository = app.get<Repository<Document>>(getRepositoryToken(Document));
-  const ingestionRepository = app.get<Repository<Ingestion>>(getRepositoryToken(Ingestion));
+  const documentRepository = app.get<Repository<Document>>(
+    getRepositoryToken(Document),
+  );
+  const ingestionRepository = app.get<Repository<Ingestion>>(
+    getRepositoryToken(Ingestion),
+  );
 
   // Generate admin user
   const adminPassword = await bcrypt.hash('admin123', 10);
@@ -65,7 +72,8 @@ async function bootstrap() {
   for (let i = 0; i < 1000; i++) {
     const user: User = faker.helpers.arrayElement(allUsers); // corrected random array element
 
-    const document: DeepPartial<Document> = { // Corrected type, and variable type.
+    const document: DeepPartial<Document> = {
+      // Corrected type, and variable type.
       title: faker.lorem.sentence(),
       description: faker.lorem.paragraph(),
       filename: `${faker.string.uuid()}.pdf`, //Corrected uuid call
@@ -101,11 +109,13 @@ async function bootstrap() {
     const document = faker.helpers.arrayElement(allDocuments); // corrected random array element
     const status = faker.helpers.arrayElement(Object.values(IngestionStatus)); // corrected random array element
 
-    const ingestion: DeepPartial<Ingestion> = { //corrected type here
+    const ingestion: DeepPartial<Ingestion> = {
+      //corrected type here
       documentId: document.id,
       triggeredById: user.id,
       status,
-      errorMessage: status === IngestionStatus.FAILED ? faker.lorem.sentence() : null,
+      errorMessage:
+        status === IngestionStatus.FAILED ? faker.lorem.sentence() : null,
     };
 
     ingestions.push(ingestion);

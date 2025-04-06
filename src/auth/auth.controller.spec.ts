@@ -86,9 +86,13 @@ describe('AuthController', () => {
         email: 'test@example.com',
         password: 'password123',
       };
-      (authService.login as jest.Mock).mockRejectedValue(new UnauthorizedException());
+      (authService.login as jest.Mock).mockRejectedValue(
+        new UnauthorizedException(),
+      );
 
-      await expect(controller.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 });

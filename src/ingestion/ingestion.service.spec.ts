@@ -11,7 +11,6 @@ import { User } from '../users/entities/user.entity';
 import { TriggerIngestionDto } from './dto/trigger-ingestion.dto';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 
-
 describe('IngestionService', () => {
   let service: IngestionService;
   let ingestionRepository: Repository<Ingestion>;
@@ -55,11 +54,18 @@ describe('IngestionService', () => {
     }).compile();
 
     service = module.get<IngestionService>(IngestionService);
-    ingestionRepository = module.get<Repository<Ingestion>>(getRepositoryToken(Ingestion));
+    ingestionRepository = module.get<Repository<Ingestion>>(
+      getRepositoryToken(Ingestion),
+    );
     documentsService = module.get<DocumentsService>(DocumentsService);
     httpService = module.get<HttpService>(HttpService);
     configService = module.get<ConfigService>(ConfigService);
-    ingestionServices = new IngestionService(ingestionRepository, documentsService, httpService, configService);
+    ingestionServices = new IngestionService(
+      ingestionRepository,
+      documentsService,
+      httpService,
+      configService,
+    );
   });
 
   afterEach(() => {
@@ -83,17 +89,21 @@ describe('IngestionService', () => {
         updatedAt: new Date(),
         isActive: true,
         documents: [],
-        ingestions: []
+        ingestions: [],
       } as unknown as User;
       const mockDocument = { id: 1, userId: 'user-1', filepath: 'test.pdf' };
       const triggerDto: TriggerIngestionDto = {
         documentIds: [1],
-        options: { extractText: true }
+        options: { extractText: true },
       };
 
-      jest.spyOn(documentsService, 'findOne').mockResolvedValue(mockDocument as any);
-      jest.spyOn(ingestionRepository, 'create').mockImplementation((data) => data as any);
-      jest.spyOn(ingestionRepository, 'save').mockImplementation((data) => 
+      jest
+        .spyOn(documentsService, 'findOne')
+        .mockResolvedValue(mockDocument as any);
+      jest
+        .spyOn(ingestionRepository, 'create')
+        .mockImplementation((data) => data as any);
+      jest.spyOn(ingestionRepository, 'save').mockImplementation((data) =>
         Promise.resolve({
           id: 'ingestion-123',
           status: IngestionStatus.PROCESSING,
@@ -104,13 +114,15 @@ describe('IngestionService', () => {
           options: triggerDto.options,
           createdAt: new Date(),
           updatedAt: new Date(),
-          ...data
-        } as Ingestion)
+          ...data,
+        } as Ingestion),
       );
-      jest.spyOn(httpService, 'post').mockReturnValue(of({ status: 200, data: {} } as any));
+      jest
+        .spyOn(httpService, 'post')
+        .mockReturnValue(of({ status: 200, data: {} } as any));
 
       const result = await service.triggerIngestion(triggerDto, mockUser);
-      
+
       expect(result.length).toBe(1);
       expect(result[0].status).toBe(IngestionStatus.PROCESSING);
       expect(documentsService.findOne).toHaveBeenCalledWith(1);
@@ -129,17 +141,20 @@ describe('IngestionService', () => {
         updatedAt: new Date(),
         isActive: true,
         documents: [],
-        ingestions: []
+        ingestions: [],
       } as unknown as User;
       const triggerDto: TriggerIngestionDto = {
         documentIds: [999],
-        options: { extractText: true }
+        options: { extractText: true },
       };
 
-      jest.spyOn(documentsService, 'findOne').mockRejectedValue(new NotFoundException());
+      jest
+        .spyOn(documentsService, 'findOne')
+        .mockRejectedValue(new NotFoundException());
 
-      await expect(service.triggerIngestion(triggerDto, mockUser))
-        .rejects.toThrow(NotFoundException);
+      await expect(
+        service.triggerIngestion(triggerDto, mockUser),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('should throw ForbiddenException for unauthorized user', async () => {
@@ -154,18 +169,21 @@ describe('IngestionService', () => {
         updatedAt: new Date(),
         isActive: true,
         documents: [],
-        ingestions: []
+        ingestions: [],
       } as unknown as User;
       const mockDocument = { id: 1, userId: 'user-1', filepath: 'test.pdf' };
       const triggerDto: TriggerIngestionDto = {
         documentIds: [1],
-        options: { extractText: true }
+        options: { extractText: true },
       };
 
-      jest.spyOn(documentsService, 'findOne').mockResolvedValue(mockDocument as any);
+      jest
+        .spyOn(documentsService, 'findOne')
+        .mockResolvedValue(mockDocument as any);
 
-      await expect(service.triggerIngestion(triggerDto, mockUser))
-        .rejects.toThrow(NotFoundException);
+      await expect(
+        service.triggerIngestion(triggerDto, mockUser),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -186,7 +204,8 @@ describe('IngestionService', () => {
       const filePath = 'test.pdf';
       const options = { extractText: true };
 
-      jest.spyOn(httpService, 'post')
+      jest
+        .spyOn(httpService, 'post')
         .mockReturnValueOnce(throwError(() => new Error('Timeout')))
         .mockReturnValueOnce(of({} as any));
 
@@ -198,9 +217,11 @@ describe('IngestionService', () => {
   describe('updateIngestionStatus', () => {
     it('should update status successfully', async () => {
       const mockIngestion = { id: '123', status: IngestionStatus.PENDING };
-      
-      jest.spyOn(ingestionRepository, 'findOne').mockResolvedValue(mockIngestion as any);
-      jest.spyOn(ingestionRepository, 'save').mockImplementation((data) => 
+
+      jest
+        .spyOn(ingestionRepository, 'findOne')
+        .mockResolvedValue(mockIngestion as any);
+      jest.spyOn(ingestionRepository, 'save').mockImplementation((data) =>
         Promise.resolve({
           id: 'ingestion-456',
           status: IngestionStatus.COMPLETED,
@@ -212,14 +233,14 @@ describe('IngestionService', () => {
           options: {},
           createdAt: new Date(),
           updatedAt: new Date(),
-          ...data
-        } as Ingestion)
+          ...data,
+        } as Ingestion),
       );
 
       const result = await service.updateIngestionStatus(
-        '123', 
+        '123',
         IngestionStatus.COMPLETED,
-        'Success'
+        'Success',
       );
 
       expect(result.status).toBe(IngestionStatus.COMPLETED);
@@ -229,8 +250,13 @@ describe('IngestionService', () => {
     it('should throw NotFoundException for non-existent ingestion', async () => {
       jest.spyOn(ingestionRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.updateIngestionStatus('999', IngestionStatus.COMPLETED, undefined))
-        .rejects.toThrow(NotFoundException);
+      await expect(
+        service.updateIngestionStatus(
+          '999',
+          IngestionStatus.COMPLETED,
+          undefined,
+        ),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -241,7 +267,6 @@ describe('IngestionService', () => {
       findAll: jest.fn(),
     };
 
-  
     it('should return all ingestions', async () => {
       const ingestions = [
         { id: '1', document: { id: '1' }, triggeredBy: { id: '1' } },
@@ -255,7 +280,7 @@ describe('IngestionService', () => {
       //   relations: ['document', 'triggeredBy'],
       // });
     });
-  
+
     it('should return ingestions by user', async () => {
       const userId = '1';
       const ingestions = [
@@ -275,7 +300,9 @@ describe('IngestionService', () => {
     it('should return a single ingestion', async () => {
       const id = '1';
       const ingestion = { id, document: { id: '1' }, triggeredBy: { id: '1' } };
-      ingestionRepository.findOne.mockRejectedValue(new NotFoundException(`Ingestion with ID "${id}" not found`));
+      ingestionRepository.findOne.mockRejectedValue(
+        new NotFoundException(`Ingestion with ID "${id}" not found`),
+      );
       try {
         await ingestionServices.findOne(id);
       } catch (error) {
@@ -287,12 +314,12 @@ describe('IngestionService', () => {
         // });
       }
     });
-  
+
     it('should throw a not found exception when an ingestion is not found', async () => {
       const id = '1';
       ingestionRepository.findOne.mockResolvedValue(null);
       await expect(ingestionServices.findOne(id)).rejects.toThrow(
-        new NotFoundException(`Ingestion with ID "${id}" not found`)
+        new NotFoundException(`Ingestion with ID "${id}" not found`),
       );
       expect(ingestionRepository.findOne).toHaveBeenCalledTimes(0);
       // expect(ingestionRepository.findOne).toHaveBeenCalledWith({

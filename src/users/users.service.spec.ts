@@ -48,7 +48,7 @@ describe('UsersService', () => {
         email: 'test@test.com',
         password: 'password',
         firstName: 'Test',
-        lastName: 'User'
+        lastName: 'User',
       };
       const expectedUser: User = {
         ...registerDto,
@@ -57,7 +57,7 @@ describe('UsersService', () => {
         role: Role.VIEWER,
         createdAt: new Date(),
         updatedAt: new Date(),
-        documents: []
+        documents: [],
       };
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
@@ -74,11 +74,13 @@ describe('UsersService', () => {
         email: 'test@test.com',
         password: 'password',
         firstName: 'Test',
-        lastName: 'User'
+        lastName: 'User',
       };
       const existingUser = { email: 'test@test.com' };
 
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(existingUser as User);
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(existingUser as User);
 
       await expect(service.create(registerDto)).rejects.toThrow(HttpException);
     });
@@ -89,7 +91,9 @@ describe('UsersService', () => {
       const email = 'test@test.com';
       const expectedUser = { email, id: '1' };
 
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(expectedUser as User);
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(expectedUser as User);
 
       const result = await service.findByEmail(email);
       expect(result).toEqual(expectedUser);
@@ -108,7 +112,9 @@ describe('UsersService', () => {
       const id = '1';
       const expectedUser = { id, email: 'test@test.com' };
 
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(expectedUser as User);
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(expectedUser as User);
 
       const result = await service.findById(id);
       expect(result).toEqual(expectedUser);
@@ -117,7 +123,9 @@ describe('UsersService', () => {
     it('should throw NotFoundException if not found', async () => {
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.findById('nonexistent')).rejects.toThrow(NotFoundException);
+      await expect(service.findById('nonexistent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -125,10 +133,12 @@ describe('UsersService', () => {
     it('should return array of users', async () => {
       const expectedUsers = [
         { id: '1', email: 'test1@test.com' },
-        { id: '2', email: 'test2@test.com' }
+        { id: '2', email: 'test2@test.com' },
       ];
 
-      jest.spyOn(userRepository, 'find').mockResolvedValue(expectedUsers as User[]);
+      jest
+        .spyOn(userRepository, 'find')
+        .mockResolvedValue(expectedUsers as User[]);
 
       const result = await service.findAll();
       expect(result).toEqual(expectedUsers);
@@ -150,17 +160,22 @@ describe('UsersService', () => {
       const expectedUser = { ...existingUser, ...updateDto };
 
       jest.spyOn(service, 'findById').mockResolvedValue(existingUser as User);
-      jest.spyOn(userRepository, 'save').mockResolvedValue(expectedUser as User);
+      jest
+        .spyOn(userRepository, 'save')
+        .mockResolvedValue(expectedUser as User);
 
       const result = await service.update(id, updateDto);
       expect(result).toEqual(expectedUser);
     });
 
     it('should throw NotFoundException if user not found', async () => {
-      jest.spyOn(service, 'findById').mockRejectedValue(new NotFoundException());
+      jest
+        .spyOn(service, 'findById')
+        .mockRejectedValue(new NotFoundException());
 
-      await expect(service.update('nonexistent', {} as UpdateUserDto))
-        .rejects.toThrow(NotFoundException);
+      await expect(
+        service.update('nonexistent', {} as UpdateUserDto),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -172,9 +187,13 @@ describe('UsersService', () => {
     });
 
     it('should throw NotFoundException if user not found', async () => {
-      jest.spyOn(userRepository, 'delete').mockResolvedValue({ affected: 0 } as any);
+      jest
+        .spyOn(userRepository, 'delete')
+        .mockResolvedValue({ affected: 0 } as any);
 
-      await expect(service.remove('nonexistent')).rejects.toThrow(NotFoundException);
+      await expect(service.remove('nonexistent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
