@@ -4,14 +4,12 @@ import { DocumentsService } from './documents.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
-import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
 describe('DocumentsController', () => {
   let controller: DocumentsController;
-  let service: DocumentsService;
 
   // Mock DocumentsService
   const mockDocumentsService = {
@@ -44,7 +42,6 @@ describe('DocumentsController', () => {
       .compile();
 
     controller = module.get<DocumentsController>(DocumentsController);
-    service = module.get<DocumentsService>(DocumentsService);
   });
 
   afterEach(() => {
@@ -223,7 +220,7 @@ describe('DocumentsController', () => {
       size: 1024 * 1024, // 1MB
     };
 
-    it('should allow a PDF file', async () => {
+    it('should allow a PDF file', () => {
       const req = { file };
       const cb = jest.fn();
       new (FileInterceptor('file', {
@@ -235,7 +232,7 @@ describe('DocumentsController', () => {
       // expect(cb).toHaveBeenCalledWith(...expect);
     });
 
-    it('should reject a non-PDF file', async () => {
+    it('should reject a non-PDF file', () => {
       file.mimetype = 'image/jpeg';
       const req = { file };
       const cb = jest.fn();
@@ -251,7 +248,7 @@ describe('DocumentsController', () => {
       // expect(cb).toHaveBeenCalledWith(new BadRequestException('Only PDF and Word documents are allowed'), false);
     });
 
-    it('should reject a file larger than 10MB', async () => {
+    it('should reject a file larger than 10MB', () => {
       file.size = 11 * 1024 * 1024; // 11MB
       const req = { file };
       const cb = jest.fn();
@@ -267,7 +264,7 @@ describe('DocumentsController', () => {
       // expect(cb).toHaveBeenCalledWith(new BadRequestException('File size exceeds the maximum allowed size'), false);
     });
 
-    it('should generate a random filename', async () => {
+    it('should generate a random filename', () => {
       const req = { file };
       const cb = jest.fn();
       new (FileInterceptor('file', {

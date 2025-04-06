@@ -21,7 +21,7 @@ export class RolesGuard implements CanActivate {
     if (!user) return false;
 
     // Convert both to uppercase for case-insensitive comparison
-    const userRole = user.role.toUpperCase();
+    const userRole = user.role;
     return requiredRoles.some(
       (role) => role.toString().toUpperCase() === userRole,
     );
