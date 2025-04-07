@@ -85,4 +85,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: sujeetpandit/document-management:latest
+          tags: sujeetpandit/backend-nestjs-backend:latest
