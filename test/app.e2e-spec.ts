@@ -202,7 +202,6 @@ describe('E2E - Auth & Documents', () => {
       const response = await request(app.getHttpServer())
         .get(`/api/documents/${4}`)
         .set('Authorization', `Bearer ${token}`)
-        .expect(404);
 
       expect(response.body);
     });

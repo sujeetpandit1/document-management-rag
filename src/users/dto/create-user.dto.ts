@@ -24,8 +24,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   lastName!: string;
 
-  @IsEnum(['admin', 'user', 'viewer'], {
-    message: 'Role must be either admin, user, or viewer',
+  @IsEnum(['admin', 'editor', 'viewer'], {
+    message: 'Role must be either admin, editor, or viewer',
   })
   @IsNotEmpty()
   role?: string;
