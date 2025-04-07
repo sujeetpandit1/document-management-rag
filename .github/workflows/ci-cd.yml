@@ -43,8 +43,8 @@ jobs:
     - name: Run tests
       run: npm test
       env:
-        DATABASE_HOST: localhost
-        DATABASE_PORT: 5433
+        DATABASE_HOST: postgres
+        DATABASE_PORT: 5432
         DATABASE_USERNAME: postgres
         DATABASE_PASSWORD: Arjun@123
         DATABASE_NAME: document_management_test
@@ -54,8 +54,8 @@ jobs:
     - name: Run e2e tests
       run: npm run test:e2e
       env:
-        DATABASE_HOST: localhost
-        DATABASE_PORT: 5433
+        DATABASE_HOST: postgres
+        DATABASE_PORT: 5432
         DATABASE_USERNAME: postgres
         DATABASE_PASSWORD: Arjun@123
         DATABASE_NAME: document_management_test
