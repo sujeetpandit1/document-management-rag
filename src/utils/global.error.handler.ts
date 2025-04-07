@@ -64,11 +64,28 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
       if (typeof res === 'string') {
         message = res;
+        // Handle NotFoundException specifically
+        if (status === HttpStatus.NOT_FOUND) {
+          errorCode = 'NOT_FOUND';
+          message = `Resource not found at ${request.method} ${request.url}`;
+        } else if (status === HttpStatus.BAD_REQUEST) {
+          errorCode = 'VALIDATION_ERROR';
+        }
       } else if (typeof res === 'object' && res !== null) {
         const resObj = res as any;
         message = resObj.message || message;
-        errorCode = resObj.error || errorCode;
+        errorCode = (resObj.error || errorCode).toString().toUpperCase();
         details = resObj.details || null;
+        
+        // Standardize validation errors
+        if (Array.isArray(resObj.message) && status === HttpStatus.BAD_REQUEST) {
+          errorCode = 'VALIDATION_ERROR';
+          details = resObj.message.map(err => ({
+            field: err.property,
+            constraints: err.constraints
+          }));
+          message = 'Validation failed';
+        }
       }
 
       if (exception instanceof Error) {
@@ -78,17 +95,33 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = exception.message;
       stack = exception.stack;
 
+      // Standardize error codes for common error types
       switch (exception.name) {
         case 'ValidationError':
           status = HttpStatus.BAD_REQUEST;
           errorCode = 'VALIDATION_ERROR';
+          if (exception.message.includes('validation')) {
+            message = 'Validation failed';
+          }
           break;
         case 'EntityNotFoundError':
           status = HttpStatus.NOT_FOUND;
           errorCode = 'NOT_FOUND';
+          message = 'Requested resource not found';
+          break;
+        case 'UnauthorizedError':
+          status = HttpStatus.UNAUTHORIZED;
+          errorCode = 'UNAUTHORIZED';
+          break;
+        case 'ForbiddenError':
+          status = HttpStatus.FORBIDDEN;
+          errorCode = 'FORBIDDEN';
           break;
         default:
           errorCode = exception.name?.toUpperCase() || errorCode;
+          // Ensure error code doesn't contain spaces
+      // Ensure consistent error code formatting
+      errorCode = errorCode.toString().toUpperCase().replace(/\s+/g, '_');
       }
     }
 
