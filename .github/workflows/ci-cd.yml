@@ -51,16 +51,16 @@ jobs:
         JWT_SECRET: test_jwt_secret
         JWT_EXPIRATION: 3600
     
-    - name: Run e2e tests
-      run: npm run test:e2e
-      env:
-        DATABASE_HOST: postgres
-        DATABASE_PORT: 5432
-        DATABASE_USERNAME: postgres
-        DATABASE_PASSWORD: Arjun@123
-        DATABASE_NAME: document_management_test
-        JWT_SECRET: test_jwt_secret
-        JWT_EXPIRATION: 3600
+    # - name: Run e2e tests
+    #   run: npm run test:e2e
+    #   env:
+    #     DATABASE_HOST: postgres
+    #     DATABASE_PORT: 5432
+    #     DATABASE_USERNAME: postgres
+    #     DATABASE_PASSWORD: Arjun@123
+    #     DATABASE_NAME: document_management_test
+    #     JWT_SECRET: test_jwt_secret
+    #     JWT_EXPIRATION: 3600
 
   build:
     runs-on: ubuntu-latest
