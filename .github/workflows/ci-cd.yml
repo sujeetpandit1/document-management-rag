@@ -85,4 +85,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: yourusername/document-management:latest
+          tags: sujeetpandit/document-management:latest
