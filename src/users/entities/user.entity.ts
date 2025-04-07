@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../common/enums/role.enum';
@@ -30,7 +29,7 @@ export class User {
   @Column({
     type: 'enum',
     enum: Role,
-    default: Role.VIEWER,
+    default: Role.ADMIN,
   })
   role: Role;
 
