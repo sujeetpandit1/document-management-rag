@@ -105,7 +105,7 @@ describe('E2E - Auth & Documents', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('access_token');
-    console.log("user", res.body)
+    // console.log("user", res.body)
     // expect(res.body).toHaveProperty('user');
     expect(res.body.user).toHaveProperty('email', 'login-test@example.com');
   });
