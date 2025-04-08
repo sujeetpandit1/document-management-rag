@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { faker } from '@faker-js/faker'; // Import from @faker-js/faker
+import { faker } from '@faker-js/faker';
 import { AppModule } from '../app.module';
 import { User } from '../users/entities/user.entity';
 import { Document } from '../documents/entities/document.entity';
@@ -11,7 +11,7 @@ import {
   IngestionStatus,
 } from '../ingestion/entities/ingestion.entity';
 import { DeepPartial } from 'typeorm';
-import { Role } from 'src/common/enums/role.enum';
+import { Role } from '../common/enums/role.enum'; // Corrected import path
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
@@ -30,21 +30,28 @@ async function bootstrap() {
     password: adminPassword,
     firstName: 'Admin',
     lastName: 'User',
-    role: Role.ADMIN, // need to correct
+    role: Role.ADMIN,
   });
-  await userRepository.save(admin);
-  console.log('Admin user created');
+
+  // Check if the admin user already exists before saving
+  const existingAdmin = await userRepository.findOne({ where: { email: admin.email } });
+  if (!existingAdmin) {
+    await userRepository.save(admin);
+    console.log('Admin user created');
+  } else {
+    console.log('Admin user already exists, skipping creation.');
+  }
 
   // Generate regular users
   const users: User[] = [];
   for (let i = 0; i < 999; i++) {
     const password = await bcrypt.hash('password123', 10);
-    const role = faker.helpers.arrayElement([Role.EDITOR, Role.VIEWER]); // Corrected random array element
+    const role = faker.helpers.arrayElement([Role.EDITOR, Role.VIEWER]);
 
     const user = userRepository.create({
       email: faker.internet.email(),
       password,
-      firstName: faker.person.firstName(), // Corrected name functions
+      firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
       role,
     });
@@ -67,19 +74,18 @@ async function bootstrap() {
 
   // Generate documents
   const allUsers = await userRepository.find();
-  const documents: DeepPartial<Document>[] = []; // Corrected type here
+  const documents: DeepPartial<Document>[] = [];
 
   for (let i = 0; i < 1000; i++) {
-    const user: User = faker.helpers.arrayElement(allUsers); // corrected random array element
+    const user: User = faker.helpers.arrayElement(allUsers);
 
     const document: DeepPartial<Document> = {
-      // Corrected type, and variable type.
       title: faker.lorem.sentence(),
       description: faker.lorem.paragraph(),
-      filename: `${faker.string.uuid()}.pdf`, //Corrected uuid call
-      filepath: `uploads/${faker.string.uuid()}.pdf`, //corrected uuid call
+      filename: `${faker.string.uuid()}.pdf`,
+      filepath: `uploads/${faker.string.uuid()}.pdf`,
       mimeType: 'application/pdf',
-      size: faker.number.int({ min: 1000, max: 10000000 }), //corrected number call.
+      size: faker.number.int({ min: 1000, max: 10000000 }),
       uploadedBy: user,
       isProcessed: faker.datatype.boolean(),
     };
@@ -102,15 +108,14 @@ async function bootstrap() {
 
   // Generate ingestions
   const allDocuments = await documentRepository.find();
-  const ingestions: DeepPartial<Ingestion>[] = []; //Corrected type here.
+  const ingestions: DeepPartial<Ingestion>[] = [];
 
   for (let i = 0; i < 500; i++) {
-    const user = faker.helpers.arrayElement(allUsers); // corrected random array element
-    const document = faker.helpers.arrayElement(allDocuments); // corrected random array element
-    const status = faker.helpers.arrayElement(Object.values(IngestionStatus)); // corrected random array element
+    const user = faker.helpers.arrayElement(allUsers);
+    const document = faker.helpers.arrayElement(allDocuments);
+    const status = faker.helpers.arrayElement(Object.values(IngestionStatus));
 
     const ingestion: DeepPartial<Ingestion> = {
-      //corrected type here
       documentId: document.id,
       triggeredById: user.id,
       status,

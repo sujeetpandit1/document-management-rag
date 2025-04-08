@@ -225,7 +225,14 @@
                   },
                   {
                     "key": "metadata",
-                    "value": "{\n  \"title\": \"Document Title\",\n  \"description\": \"Document description\",\n  \"tags\": [\"tag1\", \"tag2\"],\n  \"category\": \"category1\"\n}",
+                    "value": {
+                      "title": "Document Title",
+                      "description": "Document description",
+                      "tags": ["tag1", "tag2"],
+                      "category": "category1",
+                      "author": "John Doe",
+                      "language": "en"
+                    },
                     "type": "text"
                   }
                 ]
