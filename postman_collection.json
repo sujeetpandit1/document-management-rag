@@ -58,7 +58,7 @@
                   "type": "text/javascript",
                   "exec": [
                     "var jsonData = pm.response.json();",
-                    "pm.environment.set(\"authToken\", jsonData.token);"
+                    "pm.environment.set(\"authToken\", jsonData.access_token);"
                   ]
                 }
               }
